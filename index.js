@@ -37,6 +37,12 @@ async function run() {
             const ReviesResult = await ReviewCollection.find().toArray();
             res.send(ReviesResult);
         });
+        app.get('/carts', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const result = await CartCollection.find(query).toArray();
+            res.send(result);
+        })
         app.post('/carts', async (req, res) => {
             const CartItem = req.body;
             const result = await CartCollection.insertOne(CartItem);
