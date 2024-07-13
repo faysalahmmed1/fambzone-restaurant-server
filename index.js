@@ -4,7 +4,7 @@ const app = express();
 const port = process.env.PORT = 5000;
 const cors = require('cors');
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 //middleware
 app.use(cors());
@@ -43,11 +43,20 @@ async function run() {
             const result = await CartCollection.find(query).toArray();
             res.send(result);
         })
+        
         app.post('/carts', async (req, res) => {
             const CartItem = req.body;
             const result = await CartCollection.insertOne(CartItem);
             res.send(result);
         })
+
+        app.delete('/carts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await CartCollection.deleteOne(query);
+            res.send(result);
+        })
+
         await client.connect();
         await client.db("admin").command({ ping: 1 });
         console.log("Connected to MongoDB!");
