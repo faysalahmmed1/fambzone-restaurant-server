@@ -41,7 +41,7 @@ async function run() {
         });
 
         const verifyToken = (req, res, next) => {
-            console.log('inside verify token', req.headers.authorization)
+            // console.log('inside verify token', req.headers.authorization)
             if (!req.headers.authorization) {
                 return res.status(401).send({ message: 'unauthorized access' });
             }
@@ -70,10 +70,11 @@ async function run() {
 
         //user Operation
         app.get('/users', verifyToken, verifyAdmin, async (req, res) => {
-            console.log(req.headers)
+            // console.log(req.headers)
             const result = await UserCollection.find().toArray();
             res.send(result);
         });
+
         app.get('/users/admin/:email', verifyToken, async (req, res) => {
             const email = req.params.email;
             if (email !== req.decoded.email) {
@@ -120,18 +121,30 @@ async function run() {
             const result = await UserCollection.updateOne(filter, updateDoc);
             res.send(result);
 
-        })
+        });
+
+
 
         //menu operation
         app.get('/menu', async (req, res) => {
             const MenuResult = await MenuCollection.find().toArray();
             res.send(MenuResult);
         });
-        app.post('/menu', verifyAdmin, verifyToken, async (req, res) => {
+
+        app.post('/menu', verifyToken, verifyAdmin, async (req, res) => {
             const item = req.body;
             const result = await MenuCollection.insertOne(item);
             res.send(result);
         });
+
+        app.delete('/menu/:id', verifyToken, verifyAdmin, async (req, res) => { 
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await MenuCollection.deleteOne(query);
+            res.send(result);
+        });
+
+
 
         // review operation
         app.get('/review', async (req, res) => {
