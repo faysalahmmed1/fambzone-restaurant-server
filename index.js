@@ -30,6 +30,7 @@ async function run() {
         const MenuCollection = client.db("fambzoneDB").collection("menu");
         const ReviewCollection = client.db("fambzoneDB").collection("review");
         const CartCollection = client.db("fambzoneDB").collection("carts");
+        const PaymentCollection = client.db('fambzoneDB').collection('payments');
 
         //  jwt ralated api
         app.post('/jwt', async (req, res) => {
@@ -201,10 +202,32 @@ async function run() {
 
 
         // stats or Analytic 
-        app.get('/admin-stats', async (req, res) => {
+        app.get('/admin-stats', verifyToken, verifyAdmin, async (req, res) => {
             const users = await UserCollection.estimatedDocumentCount();
+            const menuItems = await MenuCollection.estimatedDocumentCount();
+            const orders = await PaymentCollection.estimatedDocumentCount();
+
+            //this is not the best way
+            // const payments = await PaymentCollection.find().toArray();
+            // const revenue = payments.reduce((total, payment) => total + payment.price, 0)
+            const result = await PaymentCollection.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        totalRevenue: {
+                            $sum: '$price'
+                        }
+                    }
+                }
+            ]).toArray();
+            const revenue = result.length > 0 ? result[0].totalRevenue : 0;
+
+
             res.send({
-                users
+                users,
+                menuItems,
+                orders,
+                revenue,
             })
 
         });
