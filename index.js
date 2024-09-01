@@ -231,12 +231,41 @@ async function run() {
             })
 
         });
+        
+        //useing aggregate pipeline
+        // app.get('/order-stats', async (req, res) => {
+        //     const result = await PaymentCollection.aggregate([
+
+        //         {
+        //             $unwind: '$menuItemIds'
+        //         },
+        //         {
+        //             $lookup: {
+        //                 from: 'menu',
+        //                 localField: 'menuItemsIds',
+        //                 foreignField: 'id',
+        //                 as: 'menuItems'
+        //             }
+        //         },
+        //         {
+        //             $unwind:'menuItemsIds'
+
+        //         },
+        //         {
+        //             $group:{
+        //                 _id:'$menuItems.category',
+        //                 quantity:{$sum: 1},
+        //                 revenue:{$sum:'$menuItems.price'}
+        //             }
+        //         }
+        //     ]).toArray();
+        // })
 
 
 
-        await client.connect();
-        await client.db("admin").command({ ping: 1 });
-        console.log("Connected to MongoDB!");
+        // await client.connect();
+        // await client.db("admin").command({ ping: 1 });
+        // console.log("Connected to MongoDB!");
 
     } finally {
 
