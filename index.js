@@ -200,6 +200,16 @@ async function run() {
         });
 
 
+        // stats or Analytic 
+        app.get('/admin-stats', async (req, res) => {
+            const users = await UserCollection.estimatedDocumentCount();
+            res.send({
+                users
+            })
+
+        });
+
+
 
         await client.connect();
         await client.db("admin").command({ ping: 1 });
